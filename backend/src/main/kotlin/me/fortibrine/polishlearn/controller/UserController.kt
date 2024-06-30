@@ -1,39 +1,30 @@
 package me.fortibrine.polishlearn.controller
 
 import me.fortibrine.polishlearn.model.User
-import me.fortibrine.polishlearn.repository.UserRepository
+import me.fortibrine.polishlearn.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
+@RequestMapping("/users")
 @RestController
-@RequestMapping("/api/users")
 class UserController @Autowired constructor(
-    private val userRepository: UserRepository
+    private val userService: UserService
 ) {
 
-    @GetMapping("/{id}")
-    fun getUser(@PathVariable("id") id: String): User {
-        return userRepository.findById(id).get()
+    @GetMapping("/me")
+    fun authenticateUser(): ResponseEntity<User> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val currentUser = authentication.principal as User
+
+        return ResponseEntity.ok(currentUser)
     }
 
-    @PostMapping("/")
-    fun createUser(@RequestBody user: User): ResponseEntity.BodyBuilder {
-        userRepository.save(user)
-        return ResponseEntity.status(HttpStatus.OK)
-    }
-
-    @PatchMapping("/{id}")
-    fun updateUser(@PathVariable("id") id: String, @RequestBody user: User): ResponseEntity.BodyBuilder {
-        userRepository.save(user)
-        return ResponseEntity.ok()
-    }
-
-    @DeleteMapping("/{id}")
-    fun deleteUser(@PathVariable("id") id: String): ResponseEntity.BodyBuilder {
-        userRepository.deleteById(id)
-        return ResponseEntity.ok()
-    }
+    @GetMapping("/")
+    fun allUsers(): ResponseEntity<List<User>> =
+        ResponseEntity.ok(userService.allUsers())
 
 }
