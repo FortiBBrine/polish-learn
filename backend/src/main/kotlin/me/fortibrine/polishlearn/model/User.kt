@@ -9,24 +9,27 @@ import org.springframework.security.core.userdetails.UserDetails
 class User (
     @field:Id
     var id: String? = null,
-    private var username: String = "",
-    private var password: String = "",
-    var email: String = ""
-): UserDetails {
-    override fun getAuthorities() = listOf<GrantedAuthority>()
-    override fun getPassword() = password
-    override fun getUsername() = username
-    override fun isAccountNonExpired() = true
-    override fun isAccountNonLocked() = true
-    override fun isCredentialsNonExpired() = true
-    override fun isEnabled() = true
-
-    fun setPassword(password: String) {
-        this.password = password
-    }
-
-    fun setUsername(username: String) {
-        this.username = username
-    }
-
-}
+    var username: String = "",
+    var password: String = "",
+    var email: String = "",
+    var roles: List<String> = listOf("ROLE_USER"),
+)
+//): UserDetails {
+//    override fun getAuthorities() = listOf<GrantedAuthority>()
+//    override fun getPassword() = password
+//    override fun getUsername() = username
+//    override fun isAccountNonExpired() = true
+//    override fun isAccountNonLocked() = true
+//    override fun isCredentialsNonExpired() = true
+//    override fun isEnabled() = true
+//
+//    fun setPassword(password: String) {
+//        this.password = password
+//    }
+//
+//    fun setUsername(username: String) {
+//        this.username = username
+//    }
+//
+//}
+//
