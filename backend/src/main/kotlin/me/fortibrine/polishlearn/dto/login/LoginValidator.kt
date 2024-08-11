@@ -1,7 +1,9 @@
 package me.fortibrine.polishlearn.dto.login
 
+import me.fortibrine.polishlearn.model.User
 import me.fortibrine.polishlearn.service.HashService
 import me.fortibrine.polishlearn.service.UserService
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
 import org.springframework.validation.Validator
@@ -17,6 +19,11 @@ class LoginValidator (
     override fun validate(target: Any, errors: Errors) {
         val payload = target as LoginDto
         val user = userService.findByUsername(payload.username)
+
+        if (SecurityContextHolder.getContext().authentication.principal is User) {
+            errors.rejectValue("username", "", "You are already authenticated")
+            return
+        }
 
         if (user == null) {
             errors.rejectValue("username", "", "Wrong username or password.")

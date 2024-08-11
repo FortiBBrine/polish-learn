@@ -10,6 +10,7 @@ import me.fortibrine.polishlearn.model.User
 import me.fortibrine.polishlearn.service.HashService
 import me.fortibrine.polishlearn.service.TokenService
 import me.fortibrine.polishlearn.service.UserService
+import me.fortibrine.polishlearn.utils.validate
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
@@ -32,15 +33,7 @@ class AuthController (
         bindingResult: BindingResult
     ): LoginResponseDto {
 
-        loginValidator.validate(payload, bindingResult)
-
-        if (bindingResult.hasErrors()) {
-            val errorMessage = StringBuilder()
-            bindingResult.allErrors.forEach { error ->
-                errorMessage.append(error.defaultMessage).append("; ")
-            }
-            throw ApiException(400, "$errorMessage")
-        }
+        bindingResult.validate(loginValidator, payload)
 
         val user = userService.findByUsername(payload.username) as User
 
@@ -58,15 +51,7 @@ class AuthController (
         bindingResult: BindingResult
     ): LoginResponseDto {
 
-        registerValidator.validate(payload, bindingResult)
-
-        if (bindingResult.hasErrors()) {
-            val errorMessage = StringBuilder()
-            bindingResult.allErrors.forEach { error ->
-                errorMessage.append(error.defaultMessage).append("; ")
-            }
-            throw ApiException(400, "$errorMessage")
-        }
+        bindingResult.validate(registerValidator, payload)
 
         val user = User(
             email = payload.email,
