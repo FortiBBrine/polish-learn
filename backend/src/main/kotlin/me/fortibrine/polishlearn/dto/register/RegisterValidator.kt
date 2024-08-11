@@ -14,8 +14,8 @@ class RegisterValidator(
     override fun validate(target: Any, errors: Errors) {
         val payload = target as RegisterDto
 
-        if (userService.existsByName(payload.name)) {
-            errors.rejectValue("name", "", "Already exists")
+        if (userService.existsByName(payload.username)) {
+            errors.rejectValue("username", "", "Already exists")
         }
 
     }

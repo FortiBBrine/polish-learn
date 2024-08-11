@@ -16,15 +16,15 @@ class LoginValidator (
 
     override fun validate(target: Any, errors: Errors) {
         val payload = target as LoginDto
-        val user = userService.findByUsername(payload.name)
+        val user = userService.findByUsername(payload.username)
 
         if (user == null) {
-            errors.rejectValue("name", "", "Wrong username or password.")
+            errors.rejectValue("username", "", "Wrong username or password.")
             return
         }
 
         if (!hashService.checkBcrypt(payload.password, user.password)) {
-            errors.rejectValue("name", "", "Wrong username or password.")
+            errors.rejectValue("username", "", "Wrong username or password.")
             return
         }
     }

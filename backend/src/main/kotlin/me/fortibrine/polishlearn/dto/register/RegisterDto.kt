@@ -9,7 +9,7 @@ data class RegisterDto (
     val email: String,
 
     @field:NotBlank(message = "Please provide a valid password")
-    val name: String,
+    val username: String,
 
     @field:Size(min = 8, max = 32, message = "Password must contain at least 8 characters")
     val password: String,

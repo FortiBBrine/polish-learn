@@ -42,7 +42,7 @@ class AuthController (
             throw ApiException(400, "$errorMessage")
         }
 
-        val user = userService.findByUsername(payload.name) as User
+        val user = userService.findByUsername(payload.username) as User
 
         return LoginResponseDto(
             token = tokenService.createToken(user),
@@ -70,7 +70,7 @@ class AuthController (
 
         val user = User(
             email = payload.email,
-            username = payload.name,
+            username = payload.username,
             password = hashService.hashBcrypt(payload.password),
         )
 
