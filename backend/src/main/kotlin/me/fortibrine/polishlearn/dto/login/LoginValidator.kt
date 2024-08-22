@@ -14,10 +14,10 @@ class LoginValidator (
     private val hashService: HashService
 ): Validator {
 
-    override fun supports(clazz: Class<*>) = LoginDto::class.java == clazz
+    override fun supports(clazz: Class<*>) = LoginRequestDto::class.java == clazz
 
     override fun validate(target: Any, errors: Errors) {
-        val payload = target as LoginDto
+        val payload = target as LoginRequestDto
         val user = userService.findByUsername(payload.username)
 
         if (SecurityContextHolder.getContext().authentication.principal is User) {

@@ -1,6 +1,6 @@
 package me.fortibrine.polishlearn.dto.login
 
-data class LoginDto (
+data class LoginRequestDto (
     val username: String,
     val password: String,
 )

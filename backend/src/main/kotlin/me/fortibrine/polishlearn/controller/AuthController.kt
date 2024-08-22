@@ -2,16 +2,18 @@ package me.fortibrine.polishlearn.controller
 
 import jakarta.validation.Valid
 import me.fortibrine.polishlearn.dto.*
-import me.fortibrine.polishlearn.dto.login.LoginDto
+import me.fortibrine.polishlearn.dto.login.LoginRequestDto
+import me.fortibrine.polishlearn.dto.login.LoginResponseDto
 import me.fortibrine.polishlearn.dto.login.LoginValidator
 import me.fortibrine.polishlearn.dto.register.RegisterDto
+import me.fortibrine.polishlearn.dto.register.RegisterResponseDto
 import me.fortibrine.polishlearn.dto.register.RegisterValidator
 import me.fortibrine.polishlearn.model.User
 import me.fortibrine.polishlearn.service.HashService
 import me.fortibrine.polishlearn.service.TokenService
 import me.fortibrine.polishlearn.service.UserService
-import me.fortibrine.polishlearn.utils.validate
 import org.springframework.validation.BindingResult
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -28,16 +30,29 @@ class AuthController (
     fun login(
         @Valid
         @RequestBody
-        payload: LoginDto,
+        payload: LoginRequestDto,
 
         bindingResult: BindingResult
-    ): LoginResponseDto {
+    ): RegisterResponseDto {
 
-        bindingResult.validate(loginValidator, payload)
+        loginValidator.validate(payload, bindingResult)
+
+        if (bindingResult.hasErrors()) {
+            return RegisterResponseDto(
+                result = mapOf(
+                    *bindingResult.
+                    allErrors
+                        .map { (it as FieldError).field to it.defaultMessage }
+                        .toTypedArray()
+                ),
+                token = null,
+            )
+        }
 
         val user = userService.findByUsername(payload.username) as User
 
-        return LoginResponseDto(
+        return RegisterResponseDto(
+            result = mapOf(),
             token = tokenService.createToken(user),
         )
     }
@@ -51,7 +66,19 @@ class AuthController (
         bindingResult: BindingResult
     ): LoginResponseDto {
 
-        bindingResult.validate(registerValidator, payload)
+        registerValidator.validate(payload, bindingResult)
+
+        if (bindingResult.hasErrors()) {
+            return LoginResponseDto(
+                result = mapOf(
+                    *bindingResult.
+                    allErrors
+                        .map { (it as FieldError).field to it.defaultMessage }
+                        .toTypedArray()
+                ),
+                token = null,
+            )
+        }
 
         val user = User(
             email = payload.email,
@@ -62,6 +89,7 @@ class AuthController (
         val savedUser = userService.save(user)
 
         return LoginResponseDto(
+            result = mapOf(),
             token = tokenService.createToken(savedUser),
         )
     }
